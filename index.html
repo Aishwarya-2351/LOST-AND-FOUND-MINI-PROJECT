@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lost & Found Portal — Stunning Animated Homepage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020; --bg2:#0e1630; --card:#0f1a3a; --text:#e7eefc; --muted:#b6c2e1;
+      --p1:#7aa2ff; --p2:#8a6cff; --accent:#00d1ff; --danger:#ff5c7a; --success:#22c55e;
+      --shadow:0 24px 60px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; color:var(--text); background: radial-gradient(1000px 700px at 85% 10%, rgba(122,162,255,.12), transparent 60%), radial-gradient(900px 650px at 10% 90%, rgba(138,108,255,.10), transparent 60%), linear-gradient(180deg, var(--bg), var(--bg2)); overflow-x:hidden}
+
+/* Navigation */
+.nav{position:fixed; inset:0 0 auto 0; height:64px; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:0 24px; z-index:50; backdrop-filter:saturate(140%) blur(10px); background:linear-gradient(180deg, rgba(15,22,48,.85), rgba(15,22,48,.55)); border-bottom:1px solid rgba(255,255,255,.06)}
+.brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px}
+.logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(45deg,var(--p1),var(--p2)); box-shadow:0 8px 24px rgba(122,162,255,.35)}
+.nav a{color:var(--text); text-decoration:none; margin-left:18px; font-weight:600; opacity:.9}
+.nav a:hover{opacity:1; color:var(--accent)}
+.nav .cta{padding:10px 16px; border-radius:12px; background:linear-gradient(90deg,var(--p1),var(--p2)); box-shadow:0 10px 26px rgba(122,162,255,.35);}
+
+/* Hero */
+.hero{position:relative; min-height:100svh; display:grid; place-items:center; padding:96px 24px 40px}
+.hero-inner{max-width:1100px; display:grid; grid-template-columns:1.1fr .9fr; gap:36px; align-items:center}
+.title{font-size:clamp(2.2rem, 4.6vw, 4.2rem); line-height:1.05; margin:0 0 12px; background:linear-gradient(90deg,var(--accent),#fff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; opacity:0; transform:translateY(30px)}
+.lead{color:var(--muted); font-size:clamp(1.05rem,1.4vw,1.15rem); margin:0 0 18px; max-width:60ch; opacity:0; transform:translateY(30px)}
+.actions{display:flex; flex-wrap:wrap; gap:12px; opacity:0; transform:translateY(30px)}
+.btn{padding:14px 20px; border-radius:14px; border:1px solid rgba(255,255,255,.06); background:#0c1533; color:var(--text); font-weight:700; letter-spacing:.1px; cursor:pointer}
+.btn.primary{background:linear-gradient(90deg,var(--p1),var(--p2)); box-shadow:0 14px 36px rgba(138,108,255,.35)}
+.btn.ghost:hover{border-color:rgba(255,255,255,.18)}
+
+/* Hero card */
+.stat-card{background:linear-gradient(145deg, #0e1634, #101a3f); padding:18px; border-radius:18px; border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); transform-style:preserve-3d}
+.search{display:flex; gap:10px; margin-top:14px}
+.search input{flex:1; padding:14px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background:#0b1431; color:var(--text)}
+.search button{padding:12px 16px; border-radius:12px; border:0; font-weight:700; background:linear-gradient(90deg,var(--accent),#4cc9f0); color:#00111a}
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+.chip{padding:14px; background:#0a1330; border:1px solid rgba(255,255,255,.06); border-radius:14px; text-align:center}
+.chip .k{font-size:1.4rem; font-weight:800}
+
+/* Sections */
+section{padding:80px 24px}
+.container{max-width:1100px; margin:0 auto}
+
+/* About */
+.about{background:linear-gradient(180deg, rgba(13,19,56,1), rgba(13,19,56,.6)); border-top:1px solid rgba(255,255,255,.06)}
+.split{display:grid; grid-template-columns:1.1fr .9fr; gap:40px; align-items:center}
+.h2{font-size:clamp(1.6rem,3.2vw,2.4rem); margin:0 0 8px}
+.p{color:var(--muted); line-height:1.8}
+.about-card{background:linear-gradient(145deg,#0e1738,#101c46); border:1px solid rgba(255,255,255,.06); border-radius:18px; padding:18px; box-shadow:var(--shadow)}
+.about-illus{aspect-ratio:4/3; border-radius:16px; background:radial-gradient(160px 120px at 30% 30%, rgba(122,162,255,.25), transparent 60%), radial-gradient(140px 110px at 70% 70%, rgba(138,108,255,.22), transparent 60%), #0b1330; border:1px solid rgba(255,255,255,.06)}
+
+/* Cards */
+.grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px}
+.card{background:linear-gradient(145deg,#0f1a3a,#0f1d48); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:18px; box-shadow:var(--shadow)}
+.card h3{margin:0 0 6px}
+.card p{margin:0; color:var(--muted)}
+
+/* Latest Updates Section */
+#updates {
+  background: linear-gradient(180deg, rgba(12,18,45,1), rgba(13,22,54,.8));
+  border-top: 1px solid rgba(255,255,255,.06);
+  text-align: center;
+}
+#updates h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+.update-card {
+  background: linear-gradient(145deg,#0e1738,#101c46);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: var(--shadow);
+}
+.update-icon i {
+  font-size: 2rem;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.update-card h3 {
+  margin: 10px 0;
+  color: var(--text);
+}
+.update-card p {
+  color: var(--muted);
+}
+
+/* Footer */
+.advanced_footer {
+  background-color: #0c142f;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--muted);
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.advanced_footer h4 {
+  color: var(--text);
+  font-weight: 600;
+}
+.advanced_footer a {
+  color: var(--muted);
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 0;
+}
+.advanced_footer a:hover {
+  color: var(--accent);
+}
+.social-icons a {
+  margin: 0 10px;
+  font-size: 1.5rem;
+  color: var(--text);
+}
+.social-icons a:hover {
+  color: var(--accent);
+}
+.newsletter {
+  margin-top: 20px;
+}
+.newsletter input[type="email"] {
+  padding: 10px;
+  border-radius: 25px 0 0 25px;
+  border: none;
+  outline: none;
+  width: 250px;
+  background: #0b1431;
+  color: var(--text);
+}
+.newsletter button {
+  padding: 10px 20px;
+  border-radius: 0 25px 25px 0;
+  border: none;
+  background: linear-gradient(90deg,var(--p1),var(--p2));
+  color: #fff;
+  cursor: pointer;
+}
+.footer-bottom {
+  margin-top: 30px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Floating blobs */
+.blob{position:absolute; width:420px; height:420px; border-radius:50%; filter:blur(60px); opacity:.28; z-index:0; pointer-events:none; animation:float 12s ease-in-out infinite alternate}
+.blob.a{background:radial-gradient(circle at 30% 30%, var(--p1), transparent 60%); left:-120px; top:-80px}
+.blob.b{background:radial-gradient(circle at 70% 70%, var(--p2), transparent 60%); right:-140px; bottom:-120px; animation-delay:-4s}
+@keyframes float{0%{transform:translateY(0)}100%{transform:translateY(-24px)}}
+
+/* Reveal animation */
+.reveal{opacity:0; transform:translateY(24px); transition:all .8s cubic-bezier(.2,.8,.2,1)}
+.reveal.show{opacity:1; transform:translateY(0)}
+
+@media (max-width: 900px){
+  .hero-inner, .split{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 600px){
+  .nav{padding:0 16px}
+  .grid{grid-template-columns:1fr}
+}
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="brand"><div class="logo"></div> Lost & Found</div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#actions">Actions</a>
+      <a class="cta" href="#report">Report Item</a>
+    </nav>
+  </div>
+
+  <!-- HERO -->
+  <section id="home" class="hero">
+    <div class="blob a"></div>
+    <div class="blob b"></div>
+    <div class="hero-inner">
+      <div>
+        <h1 class="title">Reconnect What’s Lost.</h1>
+        <p class="lead">A community portal to report missing belongings, browse found items, and reunite people with what matters.</p>
+        <div class="actions">
+          <button class="btn primary" onclick="document.querySelector('#report').scrollIntoView({behavior:'smooth'})">Report Lost / Found</button>
+          <button class="btn ghost" onclick="document.querySelector('#actions').scrollIntoView({behavior:'smooth'})">How it works</button>
+        </div>
+      </div>
+      <div class="stat-card" id="tilt">
+        <strong>Quick Search</strong>
+        <div class="search">
+          <input id="q" placeholder="Search by item, color, location…" />
+          <button onclick="fakeSearch()">Search</button>
+        </div>
+        <div class="stats">
+          <div class="chip"><div class="k" id="stat1">4</div><div class="s">Items listed</div></div>
+          <div class="chip"><div class="k" id="stat2">3</div><div class="s">Items found</div></div>
+          <div class="chip"><div class="k" id="stat3">97%</div><div class="s">Match accuracy</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST UPDATES -->
+  <section id="updates" class="py-5">
+    <div class="container">
+      <h2>Latest Updates</h2>
+      <div class="update-card">
+        <div class="update-icon"><i class="fas fa-bell"></i></div>
+        <h3>New Feature Launch</h3>
+        <p>We have launched a new feature to enhance user experience. Check it out now!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="about">
+    <div class="container split">
+      <div>
+        <h2 class="h2 reveal">About Us</h2>
+        <p class="p reveal" style="transition-delay:.15s">We’re a small team building tools that turn kindness into action. Our portal makes it simple to post a <em>lost</em> or <em>found</em> report with photos, geotags, and categories.</p>
+      </div>
+      <div class="about-illus reveal" style="transition-delay:.2s"></div>
+    </div>
+  </section>
+
+  <!-- ACTIONS -->
+  <section id="actions">
+    <div class="container">
+      <h2 class="h2 reveal">Do more with Lost & Found</h2>
+      <div class="grid">
+        <div class="card reveal"><h3>Report Lost</h3><p>Create a detailed post quickly.</p></div>
+        <div class="card reveal"><h3>Report Found</h3><p>Upload photos and location for owner verification.</p></div>
+        <div class="card reveal"><h3>Smart Alerts</h3><p>Get notified when matches appear near you.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="advanced_footer">
+    <div class="container">
+      <h4>Contact Us</h4>
+      <p><i class="fas fa-envelope"></i> info@lostandfound.com</p>
+      <p><i class="fas fa-phone"></i> +1234 567 890</p>
+
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
+
+      <div class="newsletter">
+        <h4>Subscribe to Our Newsletter</h4>
+        <form>
+          <input type="email" placeholder="Enter your email" required />
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+
+      <div class="footer-bottom">
+        © 2025 Lost & Found Portal. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <script>
+    // Animations
+    const title=document.querySelector('.title'), lead=document.querySelector('.lead'), actions=document.querySelector('.actions');
+    window.addEventListener('load', () => {
+  [title, lead, actions].forEach((el, i) => {
+    el.style.transition = 'all .8s cubic-bezier(.2,.8,.2,1)';
+    el.style.opacity = 1;
+    el.style.transform = 'translateY(0)';
+    el.style.transitionDelay = `${i * 120}ms`; 
+  });
+});
+
+
+    // Tilt effect
+    const tilt=document.getElementById('tilt');
+    tilt.addEventListener('mousemove', e=>{
+      const r=tilt.getBoundingClientRect();
+      const x=(e.clientX-(r.left+r.width/2))/(r.width/2);
+      const y=(e.clientY-(r.top+r.height/2))/(r.height/2);
+      tilt.style.transform=`rotateX(${(-y*8).toFixed(2)}deg) rotateY(${(x*8).toFixed(2)}deg)`;
+    });
+    tilt.addEventListener('mouseleave', ()=> tilt.style.transform='rotateX(0) rotateY(0)');
+
+    // Reveal on scroll
+    const reveals=[...document.querySelectorAll('.reveal')];
+    const io=new IntersectionObserver((entries)=>{
+      entries.forEach(ent=>{ if(ent.isIntersecting){ ent.target.classList.add('show'); io.unobserve(ent.target);} });
+    },{threshold:.18});
+    reveals.forEach(n=>io.observe(n));
+    fetch("http://127.0.0.1:5000/api/report/create", {
+  method: "POST",
+  headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+  body: formData
+});
+  </script>
+</body>
+</html>

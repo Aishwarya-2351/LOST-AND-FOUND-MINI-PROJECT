@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lost & Found Portal - Report Lost Item</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f4f6fb;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Banner section */
+    .report-banner {
+      position: relative;
+      background: url("image/bg.jpg") center/cover no-repeat;
+      height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .report-banner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 0;
+    }
+
+    .banner-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .report-banner h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      letter-spacing: 1px;
+    }
+
+    .report-banner p {
+      color: #ddd;
+      font-size: 1.1rem;
+    }
+
+    .report-section {
+      position: relative;
+      z-index: 3;
+      margin-top: -80px;
+      padding-bottom: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .report-card {
+      background: #fff;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      padding: 30px;
+      width: 90%;
+      max-width: 600px;
+      animation: fadeIn 1s ease;
+    }
+
+    .form-control {
+      border-radius: 8px;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border: none;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      background: #10182f;
+      color: #fff;
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+
+    footer a {
+      color: #b8c6db;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: #007bff;
+    }
+
+    .social-icons a {
+      color: #b8c6db;
+      font-size: 1.3rem;
+      margin: 0 8px;
+      transition: color 0.3s ease;
+    }
+
+    .social-icons a:hover {
+      color: #007bff;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+    <div class="container">
+      <a class="navbar-brand font-weight-bold" href="index.html">
+        <img src="image/bcc_logo.jpg" alt="Lost and Found Logo" width="40" class="mr-2" />
+        Lost & Found
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="claim.html">Claim Item</a></li>
+          <li class="nav-item active">
+            <a class="nav-link text-primary font-weight-bold" href="report.html">Report Item</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Banner -->
+  <section class="report-banner">
+    <div class="banner-content">
+      <h1>REPORT LOST ITEM</h1>
+      <p>Help others return your lost belongings by submitting accurate details below.</p>
+    </div>
+  </section>
+
+  <!-- Report Form -->
+  <section class="report-section">
+    <div class="report-card">
+      <form id="reportForm">
+        <div class="form-group">
+          <label><i class="fa-solid fa-box mr-1"></i> Item Name</label>
+          <input type="text" name="title" class="form-control" placeholder="Enter the name of the lost item" required />
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-map-marker-alt mr-1"></i> Location Lost</label>
+          <input type="text" name="location" class="form-control" placeholder="Where did you lose the item?" required />
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-calendar-days mr-1"></i> Date Lost</label>
+          <input type="date" name="dateLost" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-layer-group mr-1"></i> Category</label>
+          <select name="category" class="form-control" required>
+            <option value="">Select Category</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Documents">Documents</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Pets">Pets</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-align-left mr-1"></i> Item Description</label>
+          <textarea name="description" rows="4" class="form-control" placeholder="Provide a detailed description of the item" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-camera mr-1"></i> Upload Image (Optional)</label>
+          <input type="file" name="image" class="form-control-file" accept="image/*" />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block mt-3">Submit Report</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <h5>Subscribe to Our Newsletter</h5>
+      <form class="form-inline justify-content-center mt-3">
+        <input type="email" class="form-control mr-2" placeholder="Enter your email" required style="width: 250px; border-radius: 25px" />
+        <button class="btn btn-primary" type="submit" style="border-radius: 25px">Subscribe</button>
+      </form>
+
+      <div class="social-icons mt-4">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
+
+      <p class="mt-4 mb-0 small">© 2025 Lost and Found Portal. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    document.getElementById("reportForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch("http://127.0.0.1:5000/api/report/create", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          },
+          body: formData
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          alert("✅ Report submitted successfully!");
+          form.reset();
+        } else {
+          alert("❌ " + (result.error || "Failed to submit report."));
+        }
+      } catch (err) {
+        alert("⚠ Could not connect to the server.");
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>

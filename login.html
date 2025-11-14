@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lost & Found | Login / Sign Up</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+
+    body {
+      background: linear-gradient(135deg, #001845, #003566);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    .container {
+      position: relative;
+      width: 380px;
+      padding: 40px 30px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      transition: transform 0.8s ease;
+    }
+
+    h2 {
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #00b4d8, #48cae4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .input-box { margin: 15px 0; }
+
+    .input-box input {
+      width: 100%;
+      padding: 12px 15px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .input-box input::placeholder { color: rgba(255, 255, 255, 0.6); }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #00b4d8, #48cae4);
+      color: #001845;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s ease;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 180, 216, 0.5);
+    }
+
+    .toggle-link { margin-top: 18px; font-size: 0.9rem; }
+    .toggle-link a { color: #90e0ef; text-decoration: none; font-weight: 600; }
+    .toggle-link a:hover { text-decoration: underline; }
+
+    .message { margin-top: 12px; font-size: 0.9rem; color: #ffd60a; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade { animation: fadeIn 0.8s ease; }
+
+    @media (max-width: 480px) {
+      .container { width: 90%; padding: 30px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container fade" id="authBox">
+    <h2 id="formTitle">Login</h2>
+
+    <form id="authForm">
+      <div class="input-box" id="nameBox" style="display: none;">
+        <input type="text" id="name" placeholder="Enter your name" />
+      </div>
+
+      <div class="input-box">
+        <input type="email" id="email" placeholder="Enter your @acharya.ac.in email" required  pattern="^[a-zA-Z0-9._%+-]+@acharya\.ac\.in$"
+  title="Only @acharya.ac.in emails are allowed."/>
+      </div>
+
+
+      <div class="input-box">
+        <input type="password" id="password" placeholder="Enter your password" required />
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">Login</button>
+    </form>
+
+    <p class="toggle-link" id="toggleText">
+      Don't have an account? <a href="#" onclick="toggleForm()">Sign Up</a>
+    </p>
+
+    <p class="message" id="msg"></p>
+  </div>
+
+  <script>
+    let isLogin = true;
+    const API_BASE = "http://127.0.0.1:5000/api/auth"; // Flask backend base URL
+
+    function toggleForm() {
+      const formTitle = document.getElementById("formTitle");
+      const submitBtn = document.getElementById("submitBtn");
+      const toggleText = document.getElementById("toggleText");
+      const nameBox = document.getElementById("nameBox");
+      const msg = document.getElementById("msg");
+
+      msg.textContent = "";
+      isLogin = !isLogin;
+
+      if (isLogin) {
+        formTitle.textContent = "Login";
+        submitBtn.textContent = "Login";
+        toggleText.innerHTML = `Don't have an account? <a href="#" onclick="toggleForm()">Sign Up</a>`;
+        nameBox.style.display = "none";
+      } else {
+        formTitle.textContent = "Sign Up";
+        submitBtn.textContent = "Sign Up";
+        toggleText.innerHTML = `Already have an account? <a href="#" onclick="toggleForm()">Login</a>`;
+        nameBox.style.display = "block";
+      }
+
+      document.getElementById("authBox").classList.add("fade");
+      setTimeout(() => document.getElementById("authBox").classList.remove("fade"), 800);
+    }
+
+    document.getElementById("authForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const name = document.getElementById("name").value.trim();
+      const msg = document.getElementById("msg");
+
+      msg.style.color = "#ffd60a";
+      msg.textContent = "Processing...";
+
+     // Email validation
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@acharya\.ac\.in$/i;
+    if (!emailPattern.test(email)) {
+    msg.style.color = "#ff5c7a";
+     msg.textContent = "❌ Only @acharya.ac.in emails are allowed.";
+  return;
+}
+
+
+      // Password length check
+      if (password.length < 6) {
+        msg.style.color = "#ff5c7a";
+        msg.textContent = "⚠ Password should be at least 6 characters.";
+        return;
+      }
+
+      try {
+        const endpoint = isLogin ? `${API_BASE}/login` : `${API_BASE}/register`;
+        const payload = isLogin ? { email, password } : { name, email, password };
+
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          msg.style.color = "#22c55e";
+          msg.textContent = isLogin
+            ? "✅ Login successful! Redirecting..."
+            : "✅ Account created successfully! You can now login.";
+
+          // Handle login
+          if (isLogin) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user_id", data.user_id || "");
+            localStorage.setItem("role", data.role || "user");
+
+            setTimeout(() => {
+              window.location.href = "index.html"; // redirect to home
+            }, 1500);
+          } else {
+            setTimeout(() => toggleForm(), 1500);
+          }
+        } else {
+          msg.style.color = "#ff5c7a";
+          msg.textContent = data.error || "Something went wrong.";
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        msg.style.color = "#ff5c7a";
+        msg.textContent = "⚠ Unable to connect to the server.";
+      }
+    });
+  </script>
+</body>
+</html>

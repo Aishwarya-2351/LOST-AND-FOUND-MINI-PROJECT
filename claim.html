@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lost & Found Portal — Claim Missing Item</title>
+
+  <!-- Bootstrap 5 + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0b1020; --bg2:#0e1630; --card:#0f1a3a; --text:#e7eefc; --muted:#b6c2e1;
+      --p1:#7aa2ff; --p2:#8a6cff; --accent:#00d1ff; --success:#22c55e; --danger:#ff5c7a;
+      --border: rgba(255,255,255,.08);
+      --shadow:0 24px 60px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
+      color:var(--text);
+      background:
+        radial-gradient(900px 700px at 85% 10%, rgba(122,162,255,.12), transparent 60%),
+        radial-gradient(800px 650px at 10% 90%, rgba(138,108,255,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height:100vh;
+      scroll-padding-top:80px;
+    }
+
+    /* Glassy navbar */
+    .navbar{
+      backdrop-filter:saturate(140%) blur(10px);
+      background:linear-gradient(180deg, rgba(15,22,48,.85), rgba(15,22,48,.55));
+      border-bottom:1px solid var(--border);
+    }
+    .navbar-brand .logo{
+      width:28px;height:28px;border-radius:8px;display:inline-block;margin-right:.5rem;
+      background:linear-gradient(45deg,var(--p1),var(--p2));
+      box-shadow:0 8px 24px rgba(122,162,255,.35);
+    }
+    .nav-link{color:var(--text)!important;opacity:.9}
+    .nav-link.active,.nav-link:hover{opacity:1;color:var(--accent)!important}
+
+    /* Page header */
+    .page-hero{
+      padding:88px 0 28px;
+      border-bottom:1px solid var(--border);
+    }
+    .page-hero h1{
+      background:linear-gradient(90deg,var(--accent),#fff);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      margin-bottom:.25rem;
+    }
+    .lead{color:var(--muted)}
+
+    /* Filters */
+    .filter-bar{
+      position:sticky; top:64px; z-index:10; padding:12px; margin-top:12px;
+      background:rgba(12,18,45,.6); backdrop-filter: blur(8px);
+      border:1px solid var(--border); border-radius:14px;
+    }
+    .form-control, .form-select{
+      background:#0b1431; border:1px solid var(--border); color:var(--text);
+    }
+    .form-control::placeholder{color:#9fb0d6}
+
+    /* Cards */
+    .item-card{
+      background:linear-gradient(145deg,#0e1738,#101c46); border:1px solid var(--border);
+      border-radius:16px; overflow:hidden; box-shadow:var(--shadow);
+      transition: transform .25s ease, box-shadow .25s ease;
+      position:relative;
+    }
+    .item-card:hover{ transform: translateY(-6px); box-shadow:0 24px 60px rgba(0,0,0,.55) }
+    .item-img{height:180px; object-fit:cover; width:100%}
+    .status-badge{
+      position:absolute; top:10px; left:10px; z-index:2;
+      background:rgba(0,0,0,.45); border:1px solid var(--border); color:#fff;
+      padding:.25rem .5rem; border-radius:999px; font-size:.78rem;
+      backdrop-filter: blur(8px);
+    }
+    .shimmer::after{
+      content:""; position:absolute; inset:0; background:
+      linear-gradient(120deg, transparent 40%, rgba(255,255,255,.12), transparent 60%);
+      transform:translateX(-100%); transition: transform .8s;
+    }
+    .item-card:hover .shimmer::after{ transform:translateX(100%) }
+
+    /* Modal Wizard */
+    .modal-content{
+      background:linear-gradient(145deg,#0f1a3a,#0f1d48);
+      border:1px solid var(--border); color:var(--text);
+    }
+    .progress{background:#0c1639; height:8px}
+    .progress-bar{background:linear-gradient(90deg,var(--p1),var(--p2))}
+    .input-help{font-size:.85rem; color:var(--muted)}
+    .file-previews img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--border);margin-right:8px;margin-bottom:8px}
+
+    /* Timeline */
+    .timeline{
+      border-left:2px dashed rgba(255,255,255,.15); padding-left:14px;
+    }
+    .timeline .t-item{ position:relative; margin-bottom:10px; }
+    .timeline .t-item::before{
+      content:""; width:9px; height:9px; border-radius:50%;
+      background:var(--accent); position:absolute; left:-18px; top:8px;
+      box-shadow:0 0 0 4px rgba(0,209,255,.15);
+    }
+
+    footer{border-top:1px solid var(--border); color:var(--muted)}
+  </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#mainNav" tabindex="0">
+
+<!-- NAV -->
+<nav id="mainNav" class="navbar navbar-expand-lg fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">
+      <span class="logo"></span> Lost & Found
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"><i class="fa-solid fa-bars" style="color:#fff"></i></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#items">Items</a></li>
+        <li class="nav-item"><a class="nav-link" href="#how">How to Claim</a></li>
+        <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+        <li class="nav-item ms-lg-2"><a class="btn btn-sm text-white" style="background:linear-gradient(90deg,var(--p1),var(--p2));border-radius:12px" href="#items"><i class="fa-solid fa-hand-holding"></i> Claim Now</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="page-hero container">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <h1 class="display-5 fw-800">Claim Your Missing Item</h1>
+      <p class="lead mb-0">Browse found items, prove ownership in a few steps, and we’ll notify you once verified. Smooth, secure, and respectful of privacy.</p>
+    </div>
+    <div class="col-lg-5">
+      <div class="p-4 rounded-4" style="background:rgba(12,18,45,.6); border:1px solid var(--border)">
+        <div class="timeline small">
+          <div class="t-item"><strong>1.</strong> Pick an item & click <em>Claim</em></div>
+          <div class="t-item"><strong>2.</strong> Answer ownership questions</div>
+          <div class="t-item"><strong>3.</strong> Upload proof (photo/receipt/ID)</div>
+          <div class="t-item"><strong>4.</strong> Verify with OTP</div>
+          <div class="t-item"><strong>5.</strong> Await moderator approval</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- FILTERS -->
+<section class="container filter-bar" aria-label="Filters">
+  <div class="row g-2 align-items-center">
+    <div class="col-sm-6 col-lg-4">
+      <div class="input-group">
+        <span class="input-group-text bg-transparent text-white border-0"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <input id="search" class="form-control" placeholder="Search by item, color, brand, location…" />
+      </div>
+    </div>
+    <div class="col-sm-4 col-lg-3">
+      <select id="cat" class="form-select">
+        <option value="">All categories</option>
+        <option>Electronics</option>
+        <option>Documents</option>
+        <option>Accessories</option>
+        <option>Clothing</option>
+        <option>Pets</option>
+      </select>
+    </div>
+    <div class="col-sm-2 col-lg-2">
+      <select id="sort" class="form-select">
+        <option value="new">Newest</option>
+        <option value="near">Nearest</option>
+        <option value="popular">Most viewed</option>
+      </select>
+    </div>
+    <div class="col-lg-3 text-lg-end">
+      <small class="text-secondary">Showing <span id="count">0</span> items</small>
+    </div>
+  </div>
+</section>
+
+<!-- ITEMS GRID -->
+<section id="items" class="container py-4">
+  <div id="grid" class="row g-3">
+    <!-- Cards inserted by JS -->
+  </div>
+</section>
+
+<!-- HOW TO CLAIM -->
+<section id="how" class="container pb-4">
+  <div class="row g-4 align-items-center">
+    <div class="col-lg-6">
+      <h2 class="h3">How claiming works</h2>
+      <p class="text-secondary">We protect owners and finders. Claims require basic answers about the item and one or more proof files. Moderators approve matches and connect you securely.</p>
+      <ul class="text-secondary mb-0">
+        <li>Describe unique identifiers (stickers, case color, engravings)</li>
+        <li>Upload a past photo or purchase receipt if available</li>
+        <li>Your contact stays private until a match is confirmed</li>
+      </ul>
+    </div>
+    <div class="col-lg-6">
+      <div class="p-4 rounded-4" style="background:rgba(12,18,45,.6); border:1px solid var(--border)">
+        <div class="progress mb-3"><div id="demoProgress" class="progress-bar" style="width:66%"></div></div>
+        <p class="mb-0 text-secondary small">Tip: Accurate descriptions speed up verification.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="container pb-5">
+  <div class="accordion" id="faqAcc">
+    <div class="accordion-item bg-transparent text-white" style="border:1px solid var(--border)">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f1">What proofs are acceptable?</button>
+      </h2>
+      <div id="f1" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+        <div class="accordion-body text-secondary">Photos of you with the item, serial numbers, bills/receipts, or any unique identifiers are best.</div>
+      </div>
+    </div>
+    <div class="accordion-item bg-transparent text-white mt-2" style="border:1px solid var(--border)">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f2">How long does verification take?</button>
+      </h2>
+      <div id="f2" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+        <div class="accordion-body text-secondary">Most claims are reviewed within 24–72 hours depending on the queue and complexity.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-4 text-center">
+  <div class="container small">© 2025 Lost & Found — Claim Page</div>
+</footer>
+
+<!-- CLAIM MODAL (3-step wizard) -->
+<div class="modal fade" id="claimModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title"><i class="fa-solid fa-clipboard-check me-2"></i>Claim Item <span id="claimItemName" class="text-secondary"></span></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-0">
+        <div class="progress mb-3"><div id="wizProgress" class="progress-bar" style="width:33%"></div></div>
+
+        <form id="claimForm">
+          <!-- Step 1 -->
+          <div class="wiz-step" data-step="1">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">What color is it?</label>
+                <input required name="color" class="form-control" placeholder="e.g., Black with blue case">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Any unique mark?</label>
+                <input required name="mark" class="form-control" placeholder="Sticker, engraving, scratch…">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Short description</label>
+                <textarea required name="desc" rows="3" class="form-control" placeholder="Where/when you lost it, brand/serial if known"></textarea>
+                <div class="input-help mt-1">Be specific. This helps us verify faster.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="wiz-step d-none" data-step="2">
+            <label class="form-label">Upload proof (images or PDF)</label>
+            <input id="files" class="form-control" type="file" accept="image/*,application/pdf" multiple>
+            <div class="file-previews d-flex flex-wrap mt-3"></div>
+            <div class="input-help">Examples: a past photo with the item, purchase receipt, serial number photo.</div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="wiz-step d-none" data-step="3">
+            <p class="mb-2">We’ve sent a 6-digit code to your email/phone (demo).</p>
+            <div class="row g-2">
+              <div class="col-8">
+                <input id="otp" maxlength="6" class="form-control" placeholder="Enter OTP">
+              </div>
+              <div class="col-4 d-grid">
+                <button type="button" class="btn btn-outline-light" id="resendBtn"><i class="fa-solid fa-rotate"></i> Resend</button>
+              </div>
+            </div>
+            <div class="input-help mt-2">This is simulated locally for demo purposes.</div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-outline-light" id="prevBtn" disabled>Back</button>
+        <button type="button" class="btn text-white" id="nextBtn" style="background:linear-gradient(90deg,var(--p1),var(--p2))">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="position-fixed p-3" style="z-index:1080; right:0; bottom:0">
+  <div id="toast" class="toast text-bg-dark border-0" role="status" aria-live="polite" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body"><i class="fa-regular fa-circle-check me-2 text-success"></i><span id="toastMsg">Claim submitted!</span></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ------------ Demo data ------------ */
+const ITEMS = [
+  {id:1, name:"Black Laptop Backpack", cat:"Accessories", where:"Library wing B", img:"https://images.unsplash.com/photo-1520975954732-35dd222996f5?q=80&w=1200&auto=format&fit=crop", date:"2025-11-01"},
+  {id:2, name:"iPhone 13 (Blue)", cat:"Electronics", where:"Cafeteria", img:"https://images.unsplash.com/photo-1632167766326-b27d14f2ad66?q=80&w=1200&auto=format&fit=crop", date:"2025-11-06"},
+  {id:3, name:"Brown Wallet", cat:"Accessories", where:"Parking Lot C", img:"https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=1200&auto=format&fit=crop", date:"2025-11-03"},
+  {id:4, name:"Student ID Card", cat:"Documents", where:"Admin Block", img:"https://images.unsplash.com/photo-1579508546978-3e0a4a06fbff?q=80&w=1200&auto=format&fit=crop", date:"2025-11-04"},
+  {id:5, name:"Grey Hoodie", cat:"Clothing", where:"Gym", img:"https://images.unsplash.com/photo-1516826957135-700dedea698c?q=80&w=1200&auto=format&fit=crop", date:"2025-11-05"},
+  {id:6, name:"Golden Retriever (collar)", cat:"Pets", where:"North Gate", img:"https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=1200&auto=format&fit=crop", date:"2025-11-02"}
+];
+
+/* ------------ Render grid + filters ------------ */
+const grid = document.getElementById('grid');
+const search = document.getElementById('search');
+const cat = document.getElementById('cat');
+const sort = document.getElementById('sort');
+const count = document.getElementById('count');
+
+function render(){
+  let q = search.value.trim().toLowerCase();
+  let c = cat.value;
+  let items = ITEMS.filter(it =>
+    (!c || it.cat===c) &&
+    (!q || (it.name+it.where+it.cat).toLowerCase().includes(q))
+  );
+  if(sort.value==='new') items.sort((a,b)=>b.date.localeCompare(a.date));
+  if(sort.value==='popular') items.sort((a,b)=> a.id-b.id);
+  if(sort.value==='near') items.sort((a,b)=> a.name.localeCompare(b.name)); // placeholder
+  count.textContent = items.length;
+
+  grid.innerHTML = items.map(it => `
+    <div class="col-12 col-sm-6 col-lg-4">
+      <article class="item-card h-100 position-relative shimmer">
+        <span class="status-badge"><i class="fa-regular fa-clock me-1"></i> Unclaimed</span>
+        <img alt="${it.name}" class="item-img" src="${it.img}">
+        <div class="p-3">
+          <h5 class="mb-1">${it.name}</h5>
+          <div class="text-secondary small mb-2"><i class="fa-solid fa-location-dot me-1"></i> ${it.where} • <i class="fa-regular fa-calendar ms-1 me-1"></i> ${it.date}</div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="badge text-bg-dark border" style="border:1px solid var(--border)">${it.cat}</span>
+            <button class="btn btn-sm text-white" style="background:linear-gradient(90deg,var(--p1),var(--p2)); border-radius:10px" data-id="${it.id}" data-name="${it.name}" data-bs-toggle="modal" data-bs-target="#claimModal">
+              <i class="fa-solid fa-hand-holding me-1"></i> Claim
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+  `).join('');
+}
+render();
+[search,cat,sort].forEach(el=>el.addEventListener('input', render));
+
+/* ------------ Claim wizard logic ------------ */
+let step = 1, otpCode = null, currentItemName = '';
+const modalEl = document.getElementById('claimModal');
+const claimModal = new bootstrap.Modal(modalEl);
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const wizProgress = document.getElementById('wizProgress');
+const claimItemName = document.getElementById('claimItemName');
+const filesInput = document.getElementById('files');
+const filePreviews = document.querySelector('.file-previews');
+const toastEl = document.getElementById('toast');
+const toast = new bootstrap.Toast(toastEl, {delay:3000});
+const toastMsg = document.getElementById('toastMsg');
+
+grid.addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-id]');
+  if(!btn) return;
+  step = 1;
+  setStep(step);
+  currentItemName = btn.dataset.name;
+  claimItemName.textContent = `${currentItemName}`;
+  document.getElementById('claimForm').reset();
+  filePreviews.innerHTML = '';
+});
+
+function setStep(n){
+  step = n;
+  document.querySelectorAll('.wiz-step').forEach(s=>{
+    s.classList.toggle('d-none', s.dataset.step != n);
+  });
+  wizProgress.style.width = (n*33) + '%';
+  prevBtn.disabled = (n===1);
+  nextBtn.textContent = (n===3) ? 'Submit Claim' : 'Next';
+}
+
+prevBtn.addEventListener('click', ()=> setStep(step-1));
+
+nextBtn.addEventListener('click', async ()=>{
+  const f = document.getElementById('claimForm');
+
+  if(step === 1){
+    // basic validation
+    if(!f.color.value.trim() || !f.mark.value.trim() || !f.desc.value.trim()){
+      pulse(nextBtn); 
+      return;
+    }
+    setStep(2);
+
+  } else if(step === 2){
+    // generate OTP (demo)
+    otpCode = (''+Math.floor(100000 + Math.random()*900000));
+    toastMsg.textContent = `Demo OTP for verification: ${otpCode}`;
+    toast.show();
+    setStep(3);
+
+  } else if(step === 3){
+    const entered = (document.getElementById('otp').value || '').trim();
+    if(entered !== otpCode){ 
+      pulse(document.getElementById('otp')); 
+      return;
+    }
+
+    // ✅ Collect claim data
+    const claimData = {
+      report_id: 1,  // You can map this dynamically if available
+      color: f.color.value.trim(),
+      mark: f.mark.value.trim(),
+      description: f.desc.value.trim()
+    };
+
+    try {
+      // ✅ Send data to backend
+      const res = await fetch("http://127.0.0.1:5000/api/claim/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`  // user JWT token
+        },
+        body: JSON.stringify(claimData)
+      });
+
+      const result = await res.json();
+
+      if(res.ok){
+        claimModal.hide();
+        toastMsg.textContent = "✅ Claim submitted successfully!";
+        toast.show();
+        markCardPending(currentItemName);
+      } else {
+        toastMsg.textContent = `❌ ${result.error || "Submission failed."}`;
+        toast.show();
+      }
+    } catch(err){
+      toastMsg.textContent = "⚠ Server not reachable.";
+      toast.show();
+    }
+  }
+});
+
+
+function pulse(el){
+  el.animate([{transform:'scale(1)'},{transform:'scale(1.04)'},{transform:'scale(1)'}], {duration:300});
+}
+
+/* File previews */
+filesInput?.addEventListener('change', (e)=>{
+  const files = [...e.target.files].slice(0,6);
+  filePreviews.innerHTML = '';
+
+  files.forEach(f=>{
+    if(f.type.startsWith('image/')){
+      const url = URL.createObjectURL(f);
+      const img = new Image();
+      img.src = url;
+      img.alt = f.name;
+      img.className = "me-2 mb-2";
+      img.style.width = "72px";
+      img.style.height = "72px";
+      img.style.objectFit = "cover";
+      img.style.borderRadius = "10px";
+      img.style.border = "1px solid rgba(255,255,255,.08)";
+      filePreviews.appendChild(img);
+    } else {
+      const div = document.createElement('div');
+      div.textContent = f.name;
+      div.className = 'border rounded px-2 py-1 text-muted small me-2 mb-2';
+      filePreviews.appendChild(div);
+    }
+  });
+});
+
+/* Resend OTP (demo) */
+document.getElementById('resendBtn').addEventListener('click', ()=>{
+  otpCode = (''+Math.floor(100000 + Math.random()*900000));
+  toastMsg.textContent = `New demo OTP: ${otpCode}`;
+  toast.show();
+});
+
+/* Mark card as pending after submit */
+function markCardPending(name){
+  [...document.querySelectorAll('.item-card')].forEach(card=>{
+    if(card.querySelector('h5')?.textContent === name){
+      const badge = card.querySelector('.status-badge');
+      badge.innerHTML = '<i class="fa-regular fa-hourglass-half me-1"></i> Claim pending';
+    }
+  });
+}
